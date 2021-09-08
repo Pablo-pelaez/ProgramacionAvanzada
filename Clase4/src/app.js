@@ -1,50 +1,26 @@
-/**
- * npm init --yes (Crear proyecto rápidamente)
- npm install (i) permite la instalación de dependencias en el proyecto
- Express-> (framework de nodeJS) Permite la creación de API's Rest con node js
-
- API
- -servidor
- - Crear endpoints con sus respectivos métodos de consulta
- - Dar respuesta al servidor
- */
-// const express = require('express'); //Importar la biblioteca
-
 import express from 'express';
 import mongoose from 'mongoose';
-//  import CompanyModel from 'CompanyModel';
-import Company from './models/CompanyModel.js';
+import companyRoutes from './routes/CompanyRoutes.js';
+import userRoutes from './routes/UserRoutes.js';
+
 const app = express();
-const port = 3001
+const port = 3001;
 
-//midlewards
-// app.use(express.json());
+//middlewards
+app.use(express.json());
+app.use(companyRoutes);
+app.use(userRoutes);
 
-//Endpoint
-//localhost://3000/users
-app.get('/', async (request, response)=> {
-    try {
-        const data = await Company.find().sort({founded_month: -1}).limit(8);
-        response.json(data);
-    }
-    catch(e) {
-        response.json(e);
-    }
+
+app.listen(port, async () => {
+  try {
+    await mongoose.connect('mongodb://localhost:27017/PRAvanzada', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    })
+  }
+  catch (e) {
+    console.log("Error de conexión a la DB")
+  }
+  console.log(`Example app listening at http://localhost:${port}`)
 });
-
-
-//Listen
-app.listen(3000, async ()=> {
-    try {
-            await mongoose.connect('mongodb://localhost:27017/PRAvanzada', {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        })
-    }
-    catch(e) {
-        console.log("Error de la conexión a la DB")
-    }
-    console.log(`The server is running at http://localhost: ${port} `)
-})
-
-
